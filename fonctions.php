@@ -1,35 +1,27 @@
 <?php
 
-header('Content-Type: application/json');
-
-$mysqli = new mysqli("localhost", "root", "", "rest_api");
-
-// Vérifie la connexion
-if ($mysqli->connect_error) {
-    die("Erreur de connexion à la base de données: " . $mysqli->connect_error);
-}
-
-// Route pour récupérer tous les utilisateurs (Read - GET)
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $result = $mysqli->query("SELECT * FROM utilisateurs");
-    $utilisateurs = [];
+include "./mysql.php";
+function getEntity($entity){
+    global $mysqli;
+    $result = $mysqli->query("SELECT * FROM $entity");
+    $rows = [];
     
     while ($row = $result->fetch_assoc()) {
-        $utilisateurs[] = $row;
+        $rows[] = $row;
     }
 
-    echo json_encode($utilisateurs);
+    echo json_encode($rows);
 }
 
 // Route pour créer un nouvel utilisateur (Create - POST)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+function postEntity($entity){
     $data = json_decode(file_get_contents('php://input'), true);
 
     $nom = $data['nom'];
     $email = $data['email'];
 
-    $stmt = $mysqli->prepare("INSERT INTO utilisateurs (nom, email) VALUES (?, ?)");
-    $stmt->bind_param("ss", $nom, $email);
+    $stmt = $mysqli->prepare("INSERT INTO ? (nom, email) VALUES (?, ?)");
+    $stmt->bind_param("sss", $entity, $nom, $email);
 
     if ($stmt->execute()) {
         echo json_encode(['message' => 'Utilisateur créé avec succès']);
@@ -37,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['error' => 'Erreur lors de la création de l\'utilisateur']);
     }
 }
-
+/*
 // Route pour mettre à jour un utilisateur (Update - PUT)
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -71,6 +63,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         echo json_encode(['error' => 'Erreur lors de la suppression de l\'utilisateur']);
     }
 }
-
-$mysqli->close();
-?>
+*/
