@@ -1,4 +1,6 @@
 <?php
+$ENTITES = ["user", "livres"];
+
 $mysqli = new mysqli("localhost", "root", "", "rest_api");
 
 // Vérifie la connexion
