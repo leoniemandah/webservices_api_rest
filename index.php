@@ -1,26 +1,24 @@
 <?php
 include "./fonctions.php";
-header('Content-Type: application/json; charset=UTF-8');
 
-$url = explode('/', $_SERVER[ 'REQUEST_URI' ]);
-$entity = $url [1];
+
 // Route pour récupérer tous les utilisateurs (Read - GET)
 switch ($_SERVER['REQUEST_METHOD']){
     case 'GET': 
-        call_user_func("getEntity",$entity);
+        call_user_func("getEntity");
         break;
     case 'POST':
-        call_user_func("postEntity",$entity);
+        call_user_func("postEntity");
         break;
     case 'PUT':
-        call_user_func("putEntity",$entity);
+        call_user_func("putEntity");
         break;
     case 'DELETE':
-        call_user_func("deleteEntity",$entity);
+        call_user_func("deleteEntity");
         break;
     default:
-    echo json_encode(['message' => "Méthode non implémenté !"]);
-            exit(0);
+        http_response_code(405);
+        exit(0);
 }
 
 $mysqli->close();
