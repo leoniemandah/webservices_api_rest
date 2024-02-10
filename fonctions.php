@@ -11,7 +11,8 @@ function getEntity(){
     switch (sizeof($url)){
         case 2:
             if ($url[1]==""){
-                include("./documentation.php");
+                include("./dist/index.php");
+                // include("./documentation.php");
                 exit(0);
             }
             break;

@@ -1,7 +1,7 @@
 <?php
 $url = explode('/', $_SERVER[ 'REQUEST_URI' ]);
 $entity1 = $url [1];
-$entity2 = $url [3];
+$entity2 = isset($url [3]) ?$url [3] : null;
 function do_exit(){
     http_response_code(404);
     exit(0);
