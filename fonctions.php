@@ -19,11 +19,11 @@ function getEntity(){
         case 3:
             $sql .= entity_1_id();
             break;
-        case 4:
+        case 4: // /user/2/livres
             $sql .= join_2_entities(); 
             $sql .= entity_1_id();
             break;
-        case 5:
+        case 5: // /user/2/livres/3
             $sql .= join_2_entities(); 
             $sql .= entity_1_id();
             $sql .= entity_2_id();

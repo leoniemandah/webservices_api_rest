@@ -3,6 +3,7 @@ info:
   title: REST API Documentation
   version: 1.0.0-oas3
   description: API Documentation for the REST API
+
 paths:
   /user:
     get:
@@ -46,6 +47,209 @@ paths:
                   message:
                     type: string
                     description: Message indicating successful creation
+  /user/{id}:
+    get:
+      description: Retrieve the user with the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
+      responses:
+        "200":
+          description: Successfully retrieved the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the user
+                  nom:
+                    type: string
+                    description: The user's name
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating user not found
+    put:
+      description: Update the user with the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
+      requestBody:
+        description: User data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                  description: The user's name
+      responses:
+        "200":
+          description: User successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message indicating successful update
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating invalid request data
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating user not found
+    delete:
+      description: Delete the user with the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
+      responses:
+        "204":
+          description: User successfully deleted (no content in response)
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating user not found
+  /livres/{id}:
+    get:
+      description: Retrieve the book with the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
+      responses:
+        "200":
+          description: Successfully retrieved the book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the book
+                  titre:
+                    type: string
+                    description: The book's title
+                  auteur:
+                    type: string
+                    description: The book's author
+                  readers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique identifier for the user
+                        nom:
+                          type: string
+                          description: The user's name
+        "404":
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating book not found
+
+    put:
+      description: Update the book with the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
+      requestBody:
+        description: Book data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                  description: The book's title
+    delete:
+      description: Deletes the book with the specified ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
+      responses:
+        "204":
+          description: Book successfully deleted (no content in response)
+        "404":
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating book not found
+        "403":
+          description: User not authorized to delete the book (optional, if authorization is required)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating insufficient permissions
+
   /livres:
     get:
       description: Retrieve all books
@@ -94,40 +298,167 @@ paths:
                   message:
                     type: string
                     description: Message indicating successful creation
-    put:
-      description: Update an existing book
-      requestBody:
-        description: Book data
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: Unique identifier for the book
-                titre:
-                  type: string
-                  description: The book's title (optional)
-                auteur:
-                  type: string
-                  description: The book's author (optional)
+  /livres/{livre_id}/user:
+    get:
+      description: Retrieve the user who owns the specified book
+      parameters:
+        - name: livre_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
       responses:
         "200":
-          description: Successfully updated the book details
+          description: Successfully retrieved the user
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  id:
+                    type: integer
+                    description: Unique identifier for the user
+                  nom:
                     type: string
-                    description: Message indicating successful update
+                    description: The user's name
+        "404":
+          description: Book not found or does not have an owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating book not found or no owner
+    post:
+      description: Assign a book to a user
+      parameters:
+        - name: livre_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
+        - name: user_ids
+          in: body
+          required: true
+          type: array
+          items:
+            type: integer
+            description: List of user IDs to assign the book to
+      responses:
+        "201":
+          description: Book successfully assigned to users
+        "400":
+          description: Invalid user ID or book already assigned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating invalid user ID or book already assigned
+        "404":
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating book not found
+  /user/{user_id}/livres:
+    get:
+      description: Retrieve the books owned by the specified user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
+      responses:
+        "200":
+          description: Successfully retrieved the books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Unique identifier for the book
+                    titre:
+                      type: string
+                      description: The book's title
+        "404":
+          description: User not found or does not have any books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating user not found or no books
+    post:
+      description: Add books to a user's collection
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
+        - name: livre_ids
+          in: body
+          required: true
+          type: array
+          items:
+            type: integer
+            description: List of book IDs to add to the user's collection
+      responses:
+        "201":
+          description: Books successfully added to user's collection
+        "400":
+          description: Invalid book ID or book already owned by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating invalid book ID or book already owned by user
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating user not found
+  /livres/{livre_id}/user/{user_id}:
     delete:
-      description: Delete an existing book
+      description: Remove a book from a specific user's ownership
+      parameters:
+        - name: livre_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the book
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: Unique identifier for the user
       responses:
         "200":
-          description: Successfully deleted the book
+          description: Successfully removed the book from the user's ownership
           content:
             application/json:
               schema:
@@ -135,4 +466,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Message indicating successful deletion
+                    description: Message indicating successful removal
+        "400":
+          description: Invalid request (e.g., user does not own the book)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating invalid request

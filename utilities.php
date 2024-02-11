@@ -23,7 +23,7 @@ function entity_id ($entity, $index){
     if($index>2)
         $where = "AND";
     $id = $url[$index];
-    if (((int) $id) != $id){
+    if (!ctype_digit($id)){
         do_exit();
     }
     return " $where $entity.id = '$id'";
@@ -79,8 +79,8 @@ function fk_join_2_entities_M_to_M ($table1, $table2){
     global $FOREIGN_KEYS;
     $jointure = " $table1 join $table2 on " . fk_join_2_entities_condition ($table1, $table2);
     if (!empty($FOREIGN_KEYS[$table1][$table2])){
-        $jointure = " $table1 join ".$FOREIGN_KEYS[$table1][$table2] . " on " . fk_join_2_entities_condition ($table1, $FOREIGN_KEYS[$table1][$table2]);
-        $jointure .= " $table2 join ".$FOREIGN_KEYS[$table1][$table2] . " on " . fk_join_2_entities_condition ($table2, $FOREIGN_KEYS[$table1][$table2]);
+        $jointure = " $table1 join ".$FOREIGN_KEYS[$table1][$table2] . " on " . fk_join_2_entities_condition ($FOREIGN_KEYS[$table1][$table2], $table1);
+        $jointure .= " $table2 join ".$FOREIGN_KEYS[$table1][$table2] . " on " . fk_join_2_entities_condition ($FOREIGN_KEYS[$table1][$table2], $table2);
     }
     return $jointure;
 }
